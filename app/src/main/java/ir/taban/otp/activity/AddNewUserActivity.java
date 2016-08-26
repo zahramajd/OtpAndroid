@@ -22,15 +22,12 @@ public class AddNewUserActivity extends Activity {
     TextView errorText;
     public static User greenUser;
     String account, pw;
-    public static ArrayList<User> allUsers;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_user_layout);
-
-        allUsers = MainActivity.allUsers;
 
         et1 = (EditText) findViewById(R.id.accountEditor);
         et2 = (EditText) findViewById(R.id.keyEditor);
@@ -66,14 +63,12 @@ public class AddNewUserActivity extends Activity {
             public void run() {
                 try {
                     greenUser.login();
-                    allUsers.add(greenUser);
+                    MainActivity.users.add(greenUser);
                     AddNewUserActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             // errorText.setText("Logged in :)");
-                            Toast.makeText(getApplicationContext(), "Logged in :)", Toast.LENGTH_SHORT).show();
-                            Intent i = new Intent(AddNewUserActivity.this, MainActivity.class);
-                            startActivity(i);
+                            Toast.makeText(getApplicationContext(), "User Added :)", Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     });
@@ -82,7 +77,8 @@ public class AddNewUserActivity extends Activity {
                         @Override
                         public void run() {
                             //errorText.setText(e.getMessage());
-                            Toast.makeText(getApplicationContext(), "already exists!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                            finish();
 
                         }
                     });

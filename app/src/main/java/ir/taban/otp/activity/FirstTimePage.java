@@ -26,7 +26,6 @@ public class FirstTimePage extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.first_page_layout);
 
-        this.endUser = LoginActivity.userArrayList;
 
         btnGo = (Button) findViewById(R.id.btnGo);
         secretEditText = (EditText) findViewById(R.id.secret);

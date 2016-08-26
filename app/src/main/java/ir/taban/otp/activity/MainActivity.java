@@ -2,6 +2,7 @@ package ir.taban.otp.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -13,8 +14,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -25,28 +29,37 @@ import ir.taban.otp.ui.MainRecycleViewAdapter;
 
 public class MainActivity extends Activity {
 
+    public static Context context;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    public static ArrayList<User> allUsers = new ArrayList<>();
-    public ArrayList<User> Dataset = new ArrayList<>();
     public static Timer timer;
-    public SharedPreferences appSharedPrefs;
+    public static ArrayList<User> users = new ArrayList<>();
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recycler_view);
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        context=this.getApplicationContext();
 
-        allUsers = LoginActivity.userArrayList;
-        if (allUsers == null)
-            allUsers = DecidingClassActivity.cUsers;
-        Dataset = allUsers;
 
+        // Load Saved Users
+        loadUsers();
+
+        if (users.size() == 0) {
+            // If no users are defined, show a login activity
+            // go to LoginActivity
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
+        }
+
+        // Save Users
         storeUsers();
 
-        mAdapter = new MainRecycleViewAdapter(Dataset);
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+
+        mAdapter = new MainRecycleViewAdapter(users);
         mRecyclerView.setAdapter(mAdapter);
 
         build_list();
@@ -55,8 +68,25 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onResume() {
+        super.onResume();
+        storeUsers();
+    }
+
+    public void addUser(User user) {
+        if(user==null)
+            return;
+
+        // Check if user already exists
+        for(User u:users)
+            if(u.getEmail().equals(user.getEmail()))
+                return;
+
+        // Add User
+        users.add(user);
+
+        // Notify
+
     }
 
     private void setClickHandlers() {
@@ -96,14 +126,37 @@ public class MainActivity extends Activity {
 
     public void storeUsers() {
         ArrayList<User.Data> data = new ArrayList<>();
-        for (User u : allUsers)
+        for (User u : users)
             data.add(u.toData());
-
+        SharedPreferences appSharedPrefs;
         appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
         String json = new Gson().toJson(data);
         prefsEditor.putString("MyUsers", json);
         prefsEditor.apply();
+    }
+
+
+
+    public void loadUsers() {
+        Gson gson = new Gson();
+        String json;
+        SharedPreferences appSharedPrefs;
+        appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+        json = appSharedPrefs.getString("MyUsers",null);
+
+        if(json!=null) {
+            Type type = new TypeToken<ArrayList<User.Data>>() {
+            }.getType();
+            List<User.Data> data=gson.fromJson(json,type);
+            if(data.size()>0){
+                users.clear();
+                for (User.Data d:data){
+                    users.add(new User(d));
+                }
+            }
+
+        }
     }
 
 }

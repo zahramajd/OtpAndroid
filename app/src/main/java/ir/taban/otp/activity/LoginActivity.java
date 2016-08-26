@@ -24,7 +24,6 @@ public class LoginActivity extends Activity {
     private TextView errorText;
     public static ArrayList<User> currentUser = null;
     public static User user;
-    public static ArrayList<User> userArrayList = new ArrayList();
 
 
     @Override
@@ -58,15 +57,14 @@ public class LoginActivity extends Activity {
             public void run() {
                 try {
                     user.login();
-                    LoginActivity.currentUser = userArrayList;
-                    userArrayList.add(user);
+
+                    MainActivity.users.add(user);
+
                     LoginActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             // errorText.setText("Logged in :)");
                             Toast.makeText(getApplicationContext(), "Logged in :)", Toast.LENGTH_SHORT).show();
-                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(i);
                             finish();
                         }
                     });
@@ -76,7 +74,8 @@ public class LoginActivity extends Activity {
                         @Override
                         public void run() {
                             //        errorText.setText(e.getMessage());
-                            Toast.makeText(getApplicationContext(), "already exists!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                            //Stay on Login Activity
                         }
                     });
                     e.printStackTrace();

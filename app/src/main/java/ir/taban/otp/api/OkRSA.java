@@ -2,8 +2,6 @@ package ir.taban.otp.api;
 
 import android.util.Base64;
 
-import ir.taban.otp.activity.DecidingClassActivity;
-
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
@@ -13,6 +11,8 @@ import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import javax.crypto.Cipher;
 import java.io.*;
 import java.security.*;
+
+import ir.taban.otp.activity.MainActivity;
 
 public class OkRSA {
 
@@ -32,7 +32,7 @@ public class OkRSA {
     }
 
     public OkRSA() throws Exception {
-        File data= DecidingClassActivity.context.getFilesDir();
+        File data= MainActivity.context.getFilesDir();
         this.publicKeyFile = new File(data,"public.pem");
         this.privateKeyFile = new File(data,"private.pem");
         this.generateKeyPair();
