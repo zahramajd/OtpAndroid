@@ -39,7 +39,11 @@ public class User {
     }
 
     public String getCurrentOTP() {
-        return client.generateToken();
+        try {
+            return client.generateToken();
+        }catch (Exception e){
+            return "??";
+        }
     }
 
     public int getRemaining() {

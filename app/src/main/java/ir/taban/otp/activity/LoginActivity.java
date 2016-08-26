@@ -22,7 +22,6 @@ public class LoginActivity extends Activity {
     private EditText inputEmail;
     private EditText inputPassword;
     private TextView errorText;
-    public static ArrayList<User> currentUser = null;
     public static User user;
 
 
@@ -58,7 +57,7 @@ public class LoginActivity extends Activity {
                 try {
                     user.login();
 
-                    MainActivity.users.add(user);
+                    MainActivity.getInstance().addUser(user);
 
                     LoginActivity.this.runOnUiThread(new Runnable() {
                         @Override

@@ -29,20 +29,24 @@ import ir.taban.otp.ui.MainRecycleViewAdapter;
 
 public class MainActivity extends Activity {
 
-    public static Context context;
+    private static MainActivity instance;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    public static Timer timer;
-    public static ArrayList<User> users = new ArrayList<>();
+    private Timer timer;
+    private ArrayList<User> users = new ArrayList<>();
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recycler_view);
-        context=this.getApplicationContext();
+        instance=this;
 
+        // Init Adapters
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mAdapter = new MainRecycleViewAdapter(users);
+        mRecyclerView.setAdapter(mAdapter);
 
         // Load Saved Users
         loadUsers();
@@ -51,20 +55,17 @@ public class MainActivity extends Activity {
             // If no users are defined, show a login activity
             // go to LoginActivity
             Intent i = new Intent(this, LoginActivity.class);
-            startActivity(i);
+            startActivityForResult(i,0);
         }
 
-        // Save Users
-        storeUsers();
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-
-        mAdapter = new MainRecycleViewAdapter(users);
-        mRecyclerView.setAdapter(mAdapter);
-
+        // Initialize UI
         build_list();
         setClickHandlers();
         initUpdater();
+    }
+
+    public static MainActivity getInstance() {
+        return instance;
     }
 
     @Override
@@ -85,7 +86,11 @@ public class MainActivity extends Activity {
         // Add User
         users.add(user);
 
-        // Notify
+        // Notify Recycler view
+        mAdapter.notifyDataSetChanged();
+
+        // Store users
+        storeUsers();
 
     }
 
@@ -94,13 +99,13 @@ public class MainActivity extends Activity {
         add_layer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, AddNewUserActivity.class));
-                finish();
+                Intent i=new Intent(MainActivity.this, AddNewUserActivity.class);
+                startActivityForResult(i,0);
             }
         });
     }
 
-    public void initUpdater() {
+    private void initUpdater() {
         // update timer
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -124,7 +129,7 @@ public class MainActivity extends Activity {
         mRecyclerView.addItemDecoration(itemDecoration);
     }
 
-    public void storeUsers() {
+    private void storeUsers() {
         ArrayList<User.Data> data = new ArrayList<>();
         for (User u : users)
             data.add(u.toData());
@@ -138,7 +143,7 @@ public class MainActivity extends Activity {
 
 
 
-    public void loadUsers() {
+    private void loadUsers() {
         Gson gson = new Gson();
         String json;
         SharedPreferences appSharedPrefs;
@@ -154,8 +159,9 @@ public class MainActivity extends Activity {
                 for (User.Data d:data){
                     users.add(new User(d));
                 }
+                // We manually updated users array, so call notify
+                mAdapter.notifyDataSetChanged();
             }
-
         }
     }
 

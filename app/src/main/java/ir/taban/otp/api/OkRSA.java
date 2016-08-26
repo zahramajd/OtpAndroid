@@ -9,6 +9,7 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 
 import javax.crypto.Cipher;
+
 import java.io.*;
 import java.security.*;
 
@@ -32,9 +33,9 @@ public class OkRSA {
     }
 
     public OkRSA() throws Exception {
-        File data= MainActivity.context.getFilesDir();
-        this.publicKeyFile = new File(data,"public.pem");
-        this.privateKeyFile = new File(data,"private.pem");
+        File data = MainActivity.getInstance().getFilesDir();
+        this.publicKeyFile = new File(data, "public.pem");
+        this.privateKeyFile = new File(data, "private.pem");
         this.generateKeyPair();
         this.loadPair();
     }
@@ -119,8 +120,8 @@ public class OkRSA {
         return verify(input.getBytes(), sig.getBytes());
     }
 
-    public String getPublicKeyString() throws Exception{
-        StringWriter w=new StringWriter();
+    public String getPublicKeyString() throws Exception {
+        StringWriter w = new StringWriter();
         JcaPEMWriter writer = new JcaPEMWriter(w);
         writer.writeObject(publicKey);
         writer.close();

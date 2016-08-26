@@ -63,25 +63,28 @@ public class AddNewUserActivity extends Activity {
             public void run() {
                 try {
                     greenUser.login();
-                    MainActivity.users.add(greenUser);
+                    MainActivity.getInstance().addUser(greenUser);
+
                     AddNewUserActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             // errorText.setText("Logged in :)");
                             Toast.makeText(getApplicationContext(), "User Added :)", Toast.LENGTH_SHORT).show();
-                            finish();
+                            onBackPressed();
                         }
                     });
+
                 } catch (final Exception e) {
                     AddNewUserActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             //errorText.setText(e.getMessage());
                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                            finish();
+                            onBackPressed();
 
                         }
                     });
+
                     e.printStackTrace();
                 }
             }
