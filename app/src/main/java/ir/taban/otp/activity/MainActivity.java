@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,12 +19,17 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -40,6 +46,13 @@ public class MainActivity extends Activity {
     private RecyclerView.LayoutManager mLayoutManager;
     private Timer timer;
     private ArrayList<User> users = new ArrayList<>();
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
+    public static long dif=0;
 
 
     @Override
@@ -73,6 +86,9 @@ public class MainActivity extends Activity {
         setClickHandlers();
         setSyncClickHandlers();
         initUpdater();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     public static MainActivity getInstance() {
@@ -106,7 +122,7 @@ public class MainActivity extends Activity {
     }
 
     private void setClickHandlers() {
-      //  LinearLayout add_layer = (LinearLayout) findViewById(R.id.addCircleView);
+        //  LinearLayout add_layer = (LinearLayout) findViewById(R.id.addCircleView);
         Button add_btn = (Button) findViewById(R.id.add_user_btn);
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,7 +132,7 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void setSyncClickHandlers(){
+    private void setSyncClickHandlers() {
         Button sync_btn = (Button) findViewById(R.id.sync_btn);
         sync_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,7 +164,6 @@ public class MainActivity extends Activity {
     }
 
 
-
     public void sync_connect() {
 
         ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
@@ -169,9 +184,24 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void syncServer(){
+    public void syncServer() {
 
+        long server_time = getServerTime();
+        long client_time = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTimeInMillis() / 1000;
 
+        dif = client_time - server_time;
+
+        Toast.makeText(getApplicationContext(),
+                "App synced",
+                Toast.LENGTH_LONG).show();
+        return;
+
+    }
+
+    public long getServerTime(){
+
+        // TODO : get time from server
+        return 1472295374;
     }
 
     private void initUpdater() {
@@ -233,5 +263,44 @@ public class MainActivity extends Activity {
         }
     }
 
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//
+//        // ATTENTION: This was auto-generated to implement the App Indexing API.
+//        // See https://g.co/AppIndexing/AndroidStudio for more information.
+//        client.connect();
+//        Action viewAction = Action.newAction(
+//                Action.TYPE_VIEW, // TODO: choose an action type.
+//                "Main Page", // TODO: Define a title for the content shown.
+//                // TODO: If you have web page content that matches this app activity's content,
+//                // make sure this auto-generated web page URL is correct.
+//                // Otherwise, set the URL to null.
+//                Uri.parse("http://host/path"),
+//                // TODO: Make sure this auto-generated app URL is correct.
+//                Uri.parse("android-app://ir.taban.otp.activity/http/host/path")
+//        );
+////        AppIndex.AppIndexApi.start(client, viewAction);
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//
+//        // ATTENTION: This was auto-generated to implement the App Indexing API.
+//        // See https://g.co/AppIndexing/AndroidStudio for more information.
+//        Action viewAction = Action.newAction(
+//                Action.TYPE_VIEW, // TODO: choose an action type.
+//                "Main Page", // TODO: Define a title for the content shown.
+//                // TODO: If you have web page content that matches this app activity's content,
+//                // make sure this auto-generated web page URL is correct.
+//                // Otherwise, set the URL to null.
+//                Uri.parse("http://host/path"),
+//                // TODO: Make sure this auto-generated app URL is correct.
+//                Uri.parse("android-app://ir.taban.otp.activity/http/host/path")
+//        );
+//        AppIndex.AppIndexApi.end(client, viewAction);
+//        client.disconnect();
+//    }
 }
 
