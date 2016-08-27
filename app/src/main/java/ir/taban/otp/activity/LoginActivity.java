@@ -2,7 +2,9 @@ package ir.taban.otp.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,18 +38,40 @@ public class LoginActivity extends Activity {
         //  errorText = (TextView) findViewById(R.id.error_txt);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if (inputEmail.getText().toString().length() > 0 && inputPassword.getText().toString().length() > 0) {
-                    String email = inputEmail.getText().toString();
-                    String password = inputPassword.getText().toString();
-
-                    user = new User(email, password);
-                    // errorText.setText("Logging in ...");
-                    Toast.makeText(getApplicationContext(), "Logging in ...", Toast.LENGTH_SHORT).show();
-                    myThread();
-                }
+                login_connect();
             }
         });
     }
+
+
+    public void login_connect() {
+
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        boolean is3g = manager.getNetworkInfo(
+                ConnectivityManager.TYPE_MOBILE)
+                .isConnectedOrConnecting();
+        boolean isWifi = manager.getNetworkInfo(
+                ConnectivityManager.TYPE_WIFI)
+                .isConnectedOrConnecting();
+
+        Log.v("", is3g + " ConnectivityManager Test " + isWifi);
+        if (!is3g && !isWifi) {
+            Toast.makeText(getApplicationContext(),
+                    "Please make sure, your network connection is ON ",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            if (inputEmail.getText().toString().length() > 0 && inputPassword.getText().toString().length() > 0) {
+                String email = inputEmail.getText().toString();
+                String password = inputPassword.getText().toString();
+
+                user = new User(email, password);
+                // errorText.setText("Logging in ...");
+                Toast.makeText(getApplicationContext(), "Logging in ...", Toast.LENGTH_SHORT).show();
+                myThread();
+            }
+        }
+    }
+
 
 
     public void myThread() {

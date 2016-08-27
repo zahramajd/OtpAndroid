@@ -5,13 +5,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -41,7 +44,7 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recycler_view);
-        instance=this;
+        instance = this;
 
         // Init Adapters
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -55,11 +58,12 @@ public class MainActivity extends Activity {
             // If no users are defined, show a login activity
             // go to LoginActivity
             Intent i = new Intent(this, LoginActivity.class);
-            startActivityForResult(i,0);
+            startActivityForResult(i, 0);
         }
 
         // Initialize UI
         build_list();
+        //connect();
         setClickHandlers();
         initUpdater();
     }
@@ -75,12 +79,12 @@ public class MainActivity extends Activity {
     }
 
     public void addUser(User user) {
-        if(user==null)
+        if (user == null)
             return;
 
         // Check if user already exists
-        for(User u:users)
-            if(u.getEmail().equals(user.getEmail()))
+        for (User u : users)
+            if (u.getEmail().equals(user.getEmail()))
                 return;
 
         // Add User
@@ -99,10 +103,30 @@ public class MainActivity extends Activity {
         add_layer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(MainActivity.this, AddNewUserActivity.class);
-                startActivityForResult(i,0);
+                add_connect();
             }
         });
+    }
+
+    public void add_connect() {
+
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        boolean is3g = manager.getNetworkInfo(
+                ConnectivityManager.TYPE_MOBILE)
+                .isConnectedOrConnecting();
+        boolean isWifi = manager.getNetworkInfo(
+                ConnectivityManager.TYPE_WIFI)
+                .isConnectedOrConnecting();
+
+        Log.v("", is3g + " ConnectivityManager Test " + isWifi);
+        if (!is3g && !isWifi) {
+            Toast.makeText(getApplicationContext(),
+                    "Please make sure, your network connection is ON ",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            Intent i = new Intent(MainActivity.this, AddNewUserActivity.class);
+            startActivityForResult(i, 0);
+        }
     }
 
     private void initUpdater() {
@@ -142,21 +166,20 @@ public class MainActivity extends Activity {
     }
 
 
-
     private void loadUsers() {
         Gson gson = new Gson();
         String json;
         SharedPreferences appSharedPrefs;
         appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-        json = appSharedPrefs.getString("MyUsers",null);
+        json = appSharedPrefs.getString("MyUsers", null);
 
-        if(json!=null) {
+        if (json != null) {
             Type type = new TypeToken<ArrayList<User.Data>>() {
             }.getType();
-            List<User.Data> data=gson.fromJson(json,type);
-            if(data.size()>0){
+            List<User.Data> data = gson.fromJson(json, type);
+            if (data.size() > 0) {
                 users.clear();
-                for (User.Data d:data){
+                for (User.Data d : data) {
                     users.add(new User(d));
                 }
                 // We manually updated users array, so call notify
