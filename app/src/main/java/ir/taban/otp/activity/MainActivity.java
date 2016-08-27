@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -45,6 +46,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recycler_view);
         instance = this;
+
+        // Disable to rotate screen
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
 
         // Init Adapters
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);

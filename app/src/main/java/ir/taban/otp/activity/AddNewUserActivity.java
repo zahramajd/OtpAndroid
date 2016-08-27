@@ -2,6 +2,7 @@ package ir.taban.otp.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -29,10 +30,13 @@ public class AddNewUserActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_user_layout);
 
+        // Disable to rotate screen
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         et1 = (EditText) findViewById(R.id.accountEditor);
         et2 = (EditText) findViewById(R.id.keyEditor);
         button = (Button) findViewById(R.id.btnGo);
-        //  errorText = (TextView) findViewById(R.id.errort);
+
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
