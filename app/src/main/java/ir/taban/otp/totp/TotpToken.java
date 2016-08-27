@@ -19,6 +19,8 @@
  */
 package ir.taban.otp.totp;
 
+import android.util.Log;
+
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -55,6 +57,7 @@ public class TotpToken extends HotpToken {
 
     public int getRemaining() {
         long time = getCurrentTime().getTimeInMillis() / 1000;
+        Log.i("currr ",time+"");
         return mTimeStep - (int) (time % mTimeStep);
     }
 

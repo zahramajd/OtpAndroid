@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -70,6 +71,7 @@ public class MainActivity extends Activity {
         build_list();
         //connect();
         setClickHandlers();
+        setSyncClickHandlers();
         initUpdater();
     }
 
@@ -104,11 +106,22 @@ public class MainActivity extends Activity {
     }
 
     private void setClickHandlers() {
-        LinearLayout add_layer = (LinearLayout) findViewById(R.id.addCircleView);
-        add_layer.setOnClickListener(new View.OnClickListener() {
+      //  LinearLayout add_layer = (LinearLayout) findViewById(R.id.addCircleView);
+        Button add_btn = (Button) findViewById(R.id.add_user_btn);
+        add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 add_connect();
+            }
+        });
+    }
+
+    private void setSyncClickHandlers(){
+        Button sync_btn = (Button) findViewById(R.id.sync_btn);
+        sync_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sync_connect();
             }
         });
     }
@@ -132,6 +145,33 @@ public class MainActivity extends Activity {
             Intent i = new Intent(MainActivity.this, AddNewUserActivity.class);
             startActivityForResult(i, 0);
         }
+    }
+
+
+
+    public void sync_connect() {
+
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        boolean is3g = manager.getNetworkInfo(
+                ConnectivityManager.TYPE_MOBILE)
+                .isConnectedOrConnecting();
+        boolean isWifi = manager.getNetworkInfo(
+                ConnectivityManager.TYPE_WIFI)
+                .isConnectedOrConnecting();
+
+        Log.v("", is3g + " ConnectivityManager Test " + isWifi);
+        if (!is3g && !isWifi) {
+            Toast.makeText(getApplicationContext(),
+                    "Please make sure, your network connection is ON ",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            syncServer();
+        }
+    }
+
+    public void syncServer(){
+
+
     }
 
     private void initUpdater() {
