@@ -43,6 +43,7 @@ public class AddNewUserActivity extends Activity {
                 if (et1.getText().length() > 0 && et2.getText().length() > 0) {
                     try {
                         invoke_new_user();
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
