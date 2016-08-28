@@ -203,7 +203,7 @@ public class MainActivity extends Activity {
                             public void run() {
                                 MainActivity.this.store();// Update dif
                                 Toast.makeText(getApplicationContext(),
-                                        "Time synced, Diff is "+dif+" MilliSeconds. Sync took "+(localTime2-localTime1),
+                                        "Time synced",
                                         Toast.LENGTH_LONG).show();
                             }
                         });
@@ -217,6 +217,7 @@ public class MainActivity extends Activity {
 
     }
 
+    ///"Time synced, Diff is "+dif+" MilliSeconds. Sync took "+(localTime2-localTime1)
 
     private void initUpdater() {
         // update timer
