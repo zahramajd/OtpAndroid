@@ -2,12 +2,10 @@ package ir.taban.otp.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,10 +14,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
@@ -37,6 +33,9 @@ import ir.taban.otp.api.User;
 import ir.taban.otp.R;
 import ir.taban.otp.ui.DividerItemDecoration;
 import ir.taban.otp.ui.MainRecycleViewAdapter;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends Activity {
 
@@ -46,11 +45,7 @@ public class MainActivity extends Activity {
     private RecyclerView.LayoutManager mLayoutManager;
     private Timer timer;
     private ArrayList<User> users = new ArrayList<>();
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
+    private OkHttpClient client = new OkHttpClient();
 
     public static long dif=0;
 
@@ -71,7 +66,7 @@ public class MainActivity extends Activity {
         mRecyclerView.setAdapter(mAdapter);
 
         // Load Saved Users
-        loadUsers();
+        load();
 
         if (users.size() == 0) {
             // If no users are defined, show a login activity
@@ -86,9 +81,7 @@ public class MainActivity extends Activity {
         setClickHandlers();
         setSyncClickHandlers();
         initUpdater();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
     }
 
     public static MainActivity getInstance() {
@@ -98,7 +91,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        storeUsers();
+        store();
     }
 
     public void addUser(User user) {
@@ -117,7 +110,7 @@ public class MainActivity extends Activity {
         mAdapter.notifyDataSetChanged();
 
         // Store users
-        storeUsers();
+        store();
 
     }
 
@@ -180,29 +173,50 @@ public class MainActivity extends Activity {
                     "Please make sure, your network connection is ON ",
                     Toast.LENGTH_LONG).show();
         } else {
-            syncServer();
+            syncTime();
         }
     }
 
-    public void syncServer() {
+    private long getTime() {
+        return Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTimeInMillis();
+    }
 
-        long server_time = getServerTime();
-        long client_time = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTimeInMillis() / 1000;
+    public void syncTime() {
 
-        dif = client_time - server_time;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        final Long localTime1=getTime();
 
-        Toast.makeText(getApplicationContext(),
-                "App synced",
-                Toast.LENGTH_LONG).show();
-        return;
+                        Request request = new Request.Builder().url("http://otp.pi0.ir/sync.php").build();
+                        Response response = client.newCall(request).execute();
+                        String str = response.body().string();
+                        long realTime = Long.parseLong(str);
+
+                        final long localTime2=getTime();
+
+                        MainActivity.dif=realTime-(localTime1+localTime2)/2;
+
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                MainActivity.this.store();// Update dif
+                                Toast.makeText(getApplicationContext(),
+                                        "Time synced, Diff is "+dif+" MilliSeconds. Sync took "+(localTime2-localTime1),
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
 
     }
 
-    public long getServerTime(){
-
-        // TODO : get time from server
-        return 1472295374;
-    }
 
     private void initUpdater() {
         // update timer
@@ -228,26 +242,39 @@ public class MainActivity extends Activity {
         mRecyclerView.addItemDecoration(itemDecoration);
     }
 
-    private void storeUsers() {
-        ArrayList<User.Data> data = new ArrayList<>();
-        for (User u : users)
-            data.add(u.toData());
+    private void store() {
         SharedPreferences appSharedPrefs;
         appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+
+        // Store time diff
+        prefsEditor.putLong("dif",this.dif);
+
+        // Store Users
+        ArrayList<User.Data> data = new ArrayList<>();
+        for (User u : users)
+            data.add(u.toData());
+
         String json = new Gson().toJson(data);
         prefsEditor.putString("MyUsers", json);
+
+
         prefsEditor.apply();
     }
 
 
-    private void loadUsers() {
-        Gson gson = new Gson();
-        String json;
+    private void load() {
+
         SharedPreferences appSharedPrefs;
         appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-        json = appSharedPrefs.getString("MyUsers", null);
 
+        // Load time diff
+        this.dif=appSharedPrefs.getLong("dif",0);
+
+        // Load Users
+        Gson gson = new Gson();
+        String json;
+        json = appSharedPrefs.getString("MyUsers", null);
         if (json != null) {
             Type type = new TypeToken<ArrayList<User.Data>>() {
             }.getType();
@@ -261,6 +288,8 @@ public class MainActivity extends Activity {
                 mAdapter.notifyDataSetChanged();
             }
         }
+
+
     }
 
 

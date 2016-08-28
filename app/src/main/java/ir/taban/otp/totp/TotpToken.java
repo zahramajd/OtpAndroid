@@ -58,14 +58,14 @@ public class TotpToken extends HotpToken {
     }
 
     public int getRemaining() {
-        long time = getCurrentTime().getTimeInMillis() / 1000;
-        time-= MainActivity.dif;
-        System.out.println("dif "+MainActivity.dif);
+
+        long time = (getCurrentTime().getTimeInMillis()+MainActivity.dif) / 1000;
+
         return mTimeStep - (int) (time % mTimeStep);
     }
 
     public String generateOtp(Calendar currentTime) {
-        long time = currentTime.getTimeInMillis() / 1000;
+        long time = (currentTime.getTimeInMillis()+MainActivity.dif) / 1000;
 
         super.setEventCount(time / mTimeStep);
 
