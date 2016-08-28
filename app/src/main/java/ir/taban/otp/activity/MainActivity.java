@@ -285,7 +285,6 @@ public class MainActivity extends Activity {
                 for (User.Data d : data) {
                     users.add(new User(d));
                 }
-                // We manually updated users array, so call notify
                 mAdapter.notifyDataSetChanged();
             }
         }
