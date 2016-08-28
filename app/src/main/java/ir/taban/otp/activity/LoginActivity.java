@@ -91,7 +91,7 @@ public class LoginActivity extends Activity {
                         @Override
                         public void run() {
                             // errorText.setText("Logged in :)");
-                            Toast.makeText(getApplicationContext(), "Logged in :)", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Logged in ", Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     });

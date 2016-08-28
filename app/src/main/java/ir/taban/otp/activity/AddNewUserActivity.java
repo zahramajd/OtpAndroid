@@ -74,7 +74,7 @@ public class AddNewUserActivity extends Activity {
                         @Override
                         public void run() {
                             // errorText.setText("Logged in :)");
-                            Toast.makeText(getApplicationContext(), "User Added :)", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "User Added ", Toast.LENGTH_SHORT).show();
                             onBackPressed();
                         }
                     });
