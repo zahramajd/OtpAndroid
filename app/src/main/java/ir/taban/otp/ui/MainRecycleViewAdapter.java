@@ -72,7 +72,4 @@ public class MainRecycleViewAdapter extends RecyclerView.Adapter<MainRecycleView
         return mDataset.size();
     }
 
-    public interface MyClickListener {
-        public void onItemClick(int position, View v);
-    }
 }

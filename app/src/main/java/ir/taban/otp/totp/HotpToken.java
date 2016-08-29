@@ -1,11 +1,4 @@
 /*
- * ========================================*
- * Created By :
- *                Hamideh Hosseini (hamideh.hosseini.t@gmail.com)
- *                Zahra Majdabadi  (zahra.majabadi95@gmail.com)
- * =======================================
-*/
-/*
  * Copyright Mark McAvoy - www.bitethebullet.co.uk 2009
  *
  * This file is part of Android Token.
@@ -37,6 +30,12 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 
+/**
+ * Hotp Token
+ * <p>
+ * This is an event based OATH token, for further details
+ * see the RFC http://tools.ietf.org/html/rfc4226
+ */
 public class HotpToken {
 
     private String mName;

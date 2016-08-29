@@ -33,13 +33,6 @@ import java.util.TimeZone;
 
 import ir.taban.otp.activity.MainActivity;
 
-
-/**
- * TOTP Token
- * <p>
- * Generates an OTP based on the time, for more information see
- * http://tools.ietf.org/html/draft-mraihi-totp-timebased-00
- */
 public class TotpToken extends HotpToken {
 
     private int mTimeStep;

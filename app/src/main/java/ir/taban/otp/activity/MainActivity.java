@@ -84,7 +84,6 @@ public class MainActivity extends Activity {
 
         // Initialize UI
         build_list();
-        //connect();
         setClickHandlers();
         setSyncClickHandlers();
         initUpdater();
@@ -122,7 +121,7 @@ public class MainActivity extends Activity {
     }
 
     private void setClickHandlers() {
-        //  LinearLayout add_layer = (LinearLayout) findViewById(R.id.addCircleView);
+
         Button add_btn = (Button) findViewById(R.id.add_user_btn);
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
