@@ -1,3 +1,10 @@
+/*
+ * ========================================
+ * Created By :
+ *                Hamideh Hosseini (hamideh.hosseini.t@gmail.com)
+ *                Zahra Majdabadi  (zahra.majabadi95@gmail.com)
+ * =======================================
+*/
 package ir.taban.otp.activity;
 
 import android.annotation.TargetApi;
@@ -217,7 +224,6 @@ public class MainActivity extends Activity {
 
     }
 
-    ///"Time synced, Diff is "+dif+" MilliSeconds. Sync took "+(localTime2-localTime1)
 
     private void initUpdater() {
         // update timer
