@@ -65,6 +65,7 @@ public class AddNewUserActivity extends Activity {
         pw = et2.getText().toString();
         greenUser = new User(account, pw);
 
+        // connect to server and try to create new user
         myThread();
     }
 
@@ -80,7 +81,6 @@ public class AddNewUserActivity extends Activity {
                     AddNewUserActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            // errorText.setText("Logged in :)");
                             Toast.makeText(getApplicationContext(), "User Added ", Toast.LENGTH_SHORT).show();
                             onBackPressed();
                         }
@@ -90,7 +90,6 @@ public class AddNewUserActivity extends Activity {
                     AddNewUserActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            //errorText.setText(e.getMessage());
                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                             onBackPressed();
 

@@ -151,7 +151,8 @@ public class MainActivity extends Activity {
                 ConnectivityManager.TYPE_WIFI)
                 .isConnectedOrConnecting();
 
-        Log.v("", is3g + " ConnectivityManager Test " + isWifi);
+        // Check the connection
+
         if (!is3g && !isWifi) {
             Toast.makeText(getApplicationContext(),
                     "Please make sure, your network connection is ON ",
@@ -173,7 +174,7 @@ public class MainActivity extends Activity {
                 ConnectivityManager.TYPE_WIFI)
                 .isConnectedOrConnecting();
 
-        Log.v("", is3g + " ConnectivityManager Test " + isWifi);
+        // Check the connection
         if (!is3g && !isWifi) {
             Toast.makeText(getApplicationContext(),
                     "Please make sure, your network connection is ON ",

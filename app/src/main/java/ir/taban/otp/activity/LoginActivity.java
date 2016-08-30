@@ -47,7 +47,6 @@ public class LoginActivity extends Activity {
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
         btnLogin = (Button) findViewById(R.id.btnLogin);
-        //  errorText = (TextView) findViewById(R.id.error_txt);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 login_connect();
@@ -66,7 +65,7 @@ public class LoginActivity extends Activity {
                 ConnectivityManager.TYPE_WIFI)
                 .isConnectedOrConnecting();
 
-        Log.v("", is3g + " ConnectivityManager Test " + isWifi);
+        // Check the connection
         if (!is3g && !isWifi) {
             Toast.makeText(getApplicationContext(),
                     "Please make sure, your network connection is ON ",
@@ -77,8 +76,9 @@ public class LoginActivity extends Activity {
                 String password = inputPassword.getText().toString();
 
                 user = new User(email, password);
-                // errorText.setText("Logging in ...");
                 Toast.makeText(getApplicationContext(), "Logging in ...", Toast.LENGTH_SHORT).show();
+
+                // connect to server and try to create new user
                 myThread();
             }
         }
@@ -97,7 +97,6 @@ public class LoginActivity extends Activity {
                     LoginActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            // errorText.setText("Logged in :)");
                             Toast.makeText(getApplicationContext(), "Logged in ", Toast.LENGTH_SHORT).show();
                             finish();
                         }
@@ -107,7 +106,6 @@ public class LoginActivity extends Activity {
                     LoginActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            //        errorText.setText(e.getMessage());
                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                             //Stay on Login Activity
                         }
